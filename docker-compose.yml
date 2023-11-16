@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    networks:
+      - internal_network
+
+  influxdb:
+    image: influxdb:2.7
+    volumes:
+      - ./influxdb_data:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=influxUser
+      - DOCKER_INFLUXDB_INIT_PASSWORD=influxPass
+      - DOCKER_INFLUXDB_INIT_ORG=piOrg
+      - DOCKER_INFLUXDB_INIT_BUCKET=piBucket
+    networks:
+      - internal_network
+
+  node-red:
+    image: nodered/node-red:3.1-debian
+    volumes:
+      - ./node_red_data:/data
+    networks:
+      - internal_network
+    depends_on:
+      - mosquitto
+      - influxdb
+
+  grafana:
+    image: grafana/grafana-oss:9.5.9-ubuntu
+    volumes:
+      - ./grafana_data:/var/lib/grafana
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
+    networks:
+      - internal_network
+    depends_on:
+      - influxdb
+
+  nginx:
+    image: nginx:1.25
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./passwd:/etc/nginx/passwd:ro
+    ports:
+      - "80:80"
+    networks:
+      - internal_network
+    depends_on:
+      - node-red
+      - grafana
+
+networks:
+  internal_network:
