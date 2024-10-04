@@ -3,6 +3,14 @@
 #
 # Basic setup script to prep folder for use
 
+if [ $USER != "root" ]
+then
+	echo "use sudo! exiting now"
+	exit
+fi
+
+apt install -y apache2-utils
+
 mkdir grafana_data
 chown 472:472 grafana_data
 mkdir node_red_data

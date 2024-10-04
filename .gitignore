@@ -2,3 +2,4 @@ grafana_data/
 influxdb_data/
 node_red_data/
 passwd
+token
