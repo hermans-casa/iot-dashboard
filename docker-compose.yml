@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mosquitto:
-    image: eclipse-mosquitto:latest
+    image: eclipse-mosquitto:2.0
     ports:
       - "1883:1883"
     volumes:
