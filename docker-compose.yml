@@ -9,6 +9,7 @@ services:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
     networks:
       - internal_network
+    restart: always
 
   influxdb:
     image: influxdb:2.7
@@ -22,6 +23,7 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=piBucket
     networks:
       - internal_network
+    restart: always
 
   node-red:
     image: nodered/node-red:3.1-debian
@@ -32,6 +34,7 @@ services:
     depends_on:
       - mosquitto
       - influxdb
+    restart: always
 
   grafana:
     image: grafana/grafana-oss:9.5.9-ubuntu
@@ -43,6 +46,7 @@ services:
       - internal_network
     depends_on:
       - influxdb
+    restart: always
 
   nginx:
     image: nginx:1.25
@@ -56,6 +60,7 @@ services:
     depends_on:
       - node-red
       - grafana
+    restart: always
 
 networks:
   internal_network:
