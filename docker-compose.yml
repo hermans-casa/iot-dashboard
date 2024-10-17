@@ -15,6 +15,7 @@ services:
     image: influxdb:2.7
     volumes:
       - ./influxdb_data:/var/lib/influxdb2
+      - ./influx_conf:/etc/influx
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=influxUser
