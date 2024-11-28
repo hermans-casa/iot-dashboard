@@ -7,8 +7,6 @@ services:
       - "1883:1883"
     volumes:
       - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
-    networks:
-      - internal_network
     restart: always
 
   influxdb:
@@ -22,16 +20,12 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=influxPass
       - DOCKER_INFLUXDB_INIT_ORG=piOrg
       - DOCKER_INFLUXDB_INIT_BUCKET=piBucket
-    networks:
-      - internal_network
     restart: always
 
   node-red:
     image: nodered/node-red:3.1-debian
     volumes:
       - ./node_red_data:/data
-    networks:
-      - internal_network
     depends_on:
       - mosquitto
       - influxdb
@@ -43,8 +37,6 @@ services:
       - ./grafana_data:/var/lib/grafana
     environment:
       - GF_FEATURE_TOGGLES_ENABLE=publicDashboards
-    networks:
-      - internal_network
     depends_on:
       - influxdb
     restart: always
@@ -56,12 +48,8 @@ services:
       - ./passwd:/etc/nginx/passwd:ro
     ports:
       - "80:80"
-    networks:
-      - internal_network
     depends_on:
       - node-red
       - grafana
     restart: always
 
-networks:
-  internal_network:
